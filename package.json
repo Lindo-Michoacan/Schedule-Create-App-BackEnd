@@ -1,0 +1,35 @@
+{
+  "name": "schedule-create-app-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seeds/seed.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lindo-Michoacan/Schedule-Create-App-BackEnd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lindo-Michoacan/Schedule-Create-App-BackEnd/issues"
+  },
+  "homepage": "https://github.com/Lindo-Michoacan/Schedule-Create-App-BackEnd#readme",
+  "dependencies": {
+    "@apollo/client": "^3.7.2",
+    "apollo-server-express": "^3.11.1",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "graphql": "^16.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
