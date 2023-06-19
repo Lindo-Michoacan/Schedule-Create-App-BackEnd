@@ -12,10 +12,10 @@ const employeeSchema = new Schema(
       require: true,
       trim: true
     },
-    schedule: [
+    schedules: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Week'
+        ref: 'Schedule'
       }
     ]
   }
