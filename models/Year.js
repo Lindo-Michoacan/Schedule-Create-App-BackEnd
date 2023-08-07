@@ -4,7 +4,8 @@ const yearSchema = new Schema(
  {
   year: {
     type: Number,
-    require: true
+    require: true,
+    unique: true
   },
   months: [
     {

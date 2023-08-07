@@ -3,16 +3,22 @@ const { Employee, Schedule, Year, Month, Week } = require('../models');
 const resolvers = {
   Query: {
     years: async () => {
-      return await Year.find({}).populate('months');
+      return await Year.find({}).populate('months').populate('weeks');
     },
-    year: async (args) => {
-      return await Year.findById(args.id).populate('months')
+    year: async (parent, args) => {
+      return await Year.findById(args._id).populate('months').populate({
+        path: 'months.weeks',
+        populate: 'weeks'
+      });
     },
     months: async () => {
-      return await Month.find({});
+      return await Month.find({}).populate('weeks');
     },
     month: async (args) => {
       return await Month.findById(args.id).populate('weeks');
+    },
+    weeks: async () => {
+      return Week.find({});
     },
     employees: async () => {
       return await Employee.find({}).populate('schedules');
@@ -43,16 +49,92 @@ const resolvers = {
 
       return month
     },
+    addWeek: async (parent, { mondayDayDate, mondayMonth, mondayYear, tuesdayDayDate,tuesdayMonth, tuesdayYear, wednesdayDayDate,wednesdayMonth, wednesdayYear , monthId, yearId }) => {
+      const week = Week.create(
+        {
+        weekDays:[
+          {
+            monday: {
+              mondayDayDate: mondayDayDate,
+              mondayMonth: mondayMonth,
+              mondayYear: mondayYear
+            }
+          },
+          {
+            tuesday: {
+              tuesdayDayDate: tuesdayDayDate,
+              tuesdayMonth: tuesdayMonth,
+              tuesdayYear: tuesdayYear
+            }
+          },
+          {
+            wednesday: {
+              wednesdayDayDate: wednesdayDayDate,
+              wednesdayMonth: wednesdayMonth,
+              wednesdayYear: wednesdayYear
+            }
+          }
+        ]
+       }
+       );
+
+      await Month.findByIdAndUpdate(
+        monthId,
+        {
+          $push: { weeks: (await week).id },
+        }
+      );
+
+      await Year.findByIdAndUpdate(
+        yearId,
+        {
+          $push: { weeks: (await week).id },
+        }
+      );
+
+      return week;
+    },
     addEmployee: async (parent, { firstName, lastName }) => {
       return await Employee.create({ firstName, lastName });
     },
-    addSchedule: async (parent, { employeeId, cashRegister, beginningTime, endingTime }) => {
+    addSchedule: async (parent, { employeeId, scheduleDate, mondayCashRegister,mondayBeginningTime, mondayEndingTime }) => {
       const schedule = Schedule.create({
+        scheduleDate: scheduleDate,
         monday: {
-          cashRegister: cashRegister,
-          beginningTime: beginningTime,
-          endingTime: endingTime
+          mondayCashRegister: mondayCashRegister,
+          mondayBeginningTime: mondayBeginningTime,
+          mondayEndingTime: mondayEndingTime
         }
+        // tuesday: {
+        //   cashRegister: tuesdayCashRegister,
+        //   beginningTime: tuesdayBeginningTime,
+        //   endingTime: tuesdayEndingTime
+        // },
+        // wednesday: {
+        //   cashRegister: wednesdayCashRegister,
+        //   beginningTime: wednesdayBeginningTime,
+        //   endingTime: wednesdayEndingTime
+        // },
+        // monday: {
+        //   cashRegister: props.cashRegister,
+        //   beginningTime: props.beginningTime,
+        //   endingTime: props.endingTime
+        // },
+        // monday: {
+        //   cashRegister: props.cashRegister,
+        //   beginningTime: props.beginningTime,
+        //   endingTime: props.endingTime
+        // },
+        // monday: {
+        //   cashRegister: props.cashRegister,
+        //   beginningTime: props.beginningTime,
+        //   endingTime: props.endingTime
+        // },
+        // monday: {
+        //   cashRegister: props.cashRegister,
+        //   beginningTime: props.beginningTime,
+        //   endingTime: props.endingTime
+        // }
       });
 
       await Employee.findByIdAndUpdate(
